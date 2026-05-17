@@ -409,7 +409,7 @@ with tab2:
                 marker_color=LIGHT_BLUE,
             ))
             fig2.update_layout(
-                title="Число отзывов на автора (топ-20 значений)",
+                title="Распределение авторов по количеству отзывов (до 25 отзывов)",
                 xaxis_title="Число отзывов",
                 yaxis_title="Число авторов",
                 plot_bgcolor="white", paper_bgcolor="white",
