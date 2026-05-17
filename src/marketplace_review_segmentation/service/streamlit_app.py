@@ -489,7 +489,7 @@ with tab2:
     st.markdown('<div class="section-header">Бренды</div>', unsafe_allow_html=True)
     st.markdown(
         f'<div class="info-box" style="border-color:{ORANGE}; background:#FFF8F0">'
-        f'В датасете T-ECD настоящие названия брендов скрыты - '
+        f'В датасете T-ECD настоящие названия брендов не раскрываются — '
         f'вместо них используются анонимизированные числовые идентификаторы.'
         f'</div>',
         unsafe_allow_html=True,
