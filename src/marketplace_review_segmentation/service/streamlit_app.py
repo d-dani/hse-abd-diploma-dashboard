@@ -30,10 +30,10 @@ DARK_TEXT  = "#1C1C1C"
 SEG_COLORS = {0: GREEN, 1: LIGHT_BLUE, 2: ORANGE, 3: PURPLE, 4: "#E07878"}
 SEG_NAMES  = {
     0: "Лояльные и активные",
-    1: "Максимально позитивные",
-    2: "Сверхактивные мультибрендовые",
+    1: "Пользователи с высокой транзакционной активностью",
+    2: "Мультибрендовые, активные на маркетплейсе",
     3: "Критичные активные",
-    4: "Умеренно проблемные",
+    4: "Умеренно активные позитивные",
 }
 
 # ── Page config ───────────────────────────────────────────────────────────────
@@ -286,23 +286,52 @@ with tab1:
     with left:
         st.markdown('<div class="section-header">О проекте</div>', unsafe_allow_html=True)
         st.markdown("""
-        Авторы отзывов на маркетплейсах — неоднородная аудитория с разными поведенческими профилями.
-        Цель работы — **сегментировать авторов** на основе многодоменных поведенческих признаков
-        без заранее заданной разметки (обучение без учителя).
+        Авторы отзывов на маркетплейсах – неоднородная аудитория с разными поведенческими профилями.
+        Цель работы – **разработать и реализовать подход к сегментации авторов** на основе
+        многодоменных поведенческих признаков без заранее заданной разметки (обучение без учителя)
+        и представить результат в виде **воспроизводимого аналитического сервиса**.
 
         Объект анализа: пользователи, написавшие **≥ 3 отзывов** за период наблюдения.
-        Признаки охватывают четыре домена: отзывная активность, покупки, чеки и действия на маркетплейсе.
+        Признаки охватывают четыре домена: отзывная активность, транзакции, чеки и события на маркетплейсе,
+        а также межд­оменные соотношения и socdem-характеристики.
         """)
 
         st.markdown('<div class="section-header">Датасет</div>', unsafe_allow_html=True)
         st.markdown(f"""
         <div class="info-box">
-            <b>T-ECD</b> — кросс-доменный датасет от T-Tech (T-Банк), Hugging Face<br>
-            <span style="color:{GRAY_TEXT}">t-tech/T-ECD · CC-BY-NC-SA-4.0</span><br><br>
-            Включает: отзывы, транзакции, чеки, события маркетплейса, справочники брендов и товаров.
-            Сырые тексты отзывов не публикуются — вместо них <b>предобученные эмбеддинги (312 измерений)</b>.
+            <b>T-ECD</b> (T-Tech E-commerce Cross-Domain Dataset) – кросс-доменный датасет
+            от T-Tech (Т-Банк), опубликован в 2025 г. · Hugging Face · CC-BY-NC-SA-4.0<br><br>
+            Общий объём источника: <b>2,8 ТБ</b>. В рабочем контуре использовались данные за 3 месяца (~300 ГБ):
+            950 тыс. отзывов · 309 тыс. авторов · 733 млн marketplace-событий.<br><br>
+            Исходные тексты отзывов не публикуются – вместо них
+            <b>предобученные эмбеддинги (312 измерений)</b> внутренней модели T-Tech.
+            <code>user_id</code> согласован между доменами, что позволяет строить единый профиль пользователя.
         </div>
         """, unsafe_allow_html=True)
+
+        st.markdown('<div class="section-header">Ограничения</div>', unsafe_allow_html=True)
+        limits = [
+            ("1", "Период наблюдения",    "3 месяца данных (май–июль 2023)."),
+            ("2", "Отсутствие текстов",   "Только рейтинги и эмбеддинги – исходные тексты отзывов недоступны."),
+            ("3", "Переносимость модели", "Модель обучена на синтетическом датасете T-ECD; для реального маркетплейса требуется дополнительная валидация."),
+            ("4", "Метрики качества",     "Оценка внутренними метриками кластеризации; бизнес-валидация (CR, retention, ARPU, A/B) не проводилась."),
+        ]
+        rows = [limits[:2], limits[2:]]
+        for row in rows:
+            cols_lim = st.columns(2)
+            for col, (num, title, desc) in zip(cols_lim, row):
+                with col:
+                    st.markdown(
+                        f'<div style="background:#F7F7FA; border-radius:10px; '
+                        f'padding:0.75rem 1rem; margin-bottom:0.5rem; font-size:0.85rem">'
+                        f'<span style="display:inline-block; background:{NAVY}; color:white; '
+                        f'border-radius:50%; width:1.4rem; height:1.4rem; text-align:center; '
+                        f'line-height:1.4rem; font-size:0.75rem; font-weight:700; '
+                        f'margin-bottom:0.4rem">{num}</span> '
+                        f'<b>{title}</b><br>'
+                        f'<span style="color:{GRAY_TEXT}">{desc}</span></div>',
+                        unsafe_allow_html=True,
+                    )
 
         st.markdown('<div class="section-header">Технологический стек</div>', unsafe_allow_html=True)
         techs = ["DuckDB", "Apache Airflow", "FastAPI", "Streamlit",
@@ -409,7 +438,7 @@ with tab2:
                 marker_color=LIGHT_BLUE,
             ))
             fig2.update_layout(
-                title="Распределение авторов по количеству отзывов (до 25 отзывов)",
+                title="Распределение авторов по количеству отзывов",
                 xaxis_title="Число отзывов",
                 yaxis_title="Число авторов",
                 plot_bgcolor="white", paper_bgcolor="white",
@@ -675,16 +704,21 @@ with tab3:
 # ═══════════════════════════════════════════════════════════════════════════════
 with tab4:
     seg_profiles_data = [
-        dict(id=0, name="Лояльные и активные",          n=46982, reviews=5.94,
-             rating=4.86, neg=0.2,  brands=5.55, color=GREEN),
-        dict(id=1, name="Максимально позитивные",        n=17611, reviews=4.98,
-             rating=4.89, neg=0.07, brands=4.43, color=LIGHT_BLUE),
-        dict(id=2, name="Сверхактивные мультибрендовые", n=9928,  reviews=20.7,
-             rating=4.71, neg=7.0,  brands=17.5, color=ORANGE),
-        dict(id=3, name="Критичные активные",            n=11391, reviews=8.75,
-             rating=4.02, neg=15.4, brands=7.97, color=PURPLE),
-        dict(id=4, name="Умеренно проблемные",           n=5423,  reviews=5.58,
-             rating=4.04, neg=11.4, brands=5.12, color="#E07878"),
+        dict(id=0, name="Лояльные и активные",
+             n=28970, reviews=6.2,  rating=4.80, neg=0.2,  brands=5.8,
+             tx=278,  receipts=194, mp_events=24,  color=GREEN),
+        dict(id=1, name="Пользователи с высокой транзакционной активностью",
+             n=19412, reviews=11.3, rating=4.83, neg=0.8,  brands=9.9,
+             tx=682,  receipts=515, mp_events=122, color=LIGHT_BLUE),
+        dict(id=2, name="Мультибрендовые, активные на маркетплейсе",
+             n=25569, reviews=6.6,  rating=4.71, neg=2.6,  brands=6.1,
+             tx=347,  receipts=278, mp_events=152, color=ORANGE),
+        dict(id=3, name="Критичные активные",
+             n=9480,  reviews=9.0,  rating=3.95, neg=15.4, brands=8.0,
+             tx=619,  receipts=411, mp_events=80,  color=PURPLE),
+        dict(id=4, name="Умеренно активные позитивные",
+             n=7904,  reviews=5.8,  rating=4.85, neg=0.1,  brands=5.2,
+             tx=298,  receipts=280, mp_events=21,  color="#E07878"),
     ]
 
     # Segment cards
@@ -705,7 +739,11 @@ with tab4:
                     {seg['reviews']} отзывов (avg)<br>
                     рейтинг {seg['rating']}<br>
                     негатив {seg['neg']}%<br>
-                    брендов {seg['brands']}
+                    брендов {seg['brands']}<br>
+                    <span style="border-top:1px solid #EEE; display:block; margin:0.4rem 0"></span>
+                    {seg['tx']} транзакций (avg)<br>
+                    {seg['receipts']} чеков (avg)<br>
+                    {seg['mp_events']} mp-событий (avg)
                 </div>
             </div>""", unsafe_allow_html=True)
 
@@ -753,7 +791,7 @@ with tab4:
         sel = st.selectbox(
             "Выберите сегмент",
             available,
-            format_func=lambda x: f"Сегмент {int(x)} — {SEG_NAMES.get(int(x), '')}",
+            format_func=lambda x: f"Сегмент {int(x)} – {SEG_NAMES.get(int(x), '')}",
         )
         filtered = authors_df[authors_df["final_segment_id"] == sel].head(200)
 
@@ -869,13 +907,13 @@ with tab5:
             r = row.iloc[0]
             sid = int(r["final_segment_id"]) if pd.notna(r["final_segment_id"]) else None
             color = SEG_COLORS.get(sid, "#999") if sid is not None else "#999"
-            name  = SEG_NAMES.get(sid, "—") if sid is not None else "—"
+            name  = SEG_NAMES.get(sid, "–") if sid is not None else "–"
             c_a, c_b, c_c = st.columns(3)
             c_a.metric("Baseline сегмент", int(r["baseline_segment_id"])
-                       if pd.notna(r["baseline_segment_id"]) else "—")
+                       if pd.notna(r["baseline_segment_id"]) else "–")
             c_b.metric("NLP сегмент", int(r["nlp_segment_id"])
-                       if pd.notna(r["nlp_segment_id"]) else "—")
-            c_c.metric("Итоговый сегмент", sid if sid is not None else "—")
+                       if pd.notna(r["nlp_segment_id"]) else "–")
+            c_c.metric("Итоговый сегмент", sid if sid is not None else "–")
             st.markdown(
                 f'<span class="badge" style="background:{color}; font-size:1rem; '
                 f'padding:0.4rem 1rem">{name}</span>',
@@ -888,18 +926,18 @@ with tab5:
     st.markdown('<div class="section-header">Справка по сегментам</div>',
                 unsafe_allow_html=True)
     descriptions = {
-        0: "Регулярно пишут отзывы, высокий средний рейтинг (4.86), широкий охват брендов. Основная аудитория.",
-        1: "Почти исключительно позитивные оценки (4.89), более узкий охват. Самые довольные авторы.",
-        2: "Очень высокая активность (avg 20.7 отзывов), 17+ брендов. Ядро отзывного контента.",
-        3: "Повышенная доля негативных оценок (15.4%), активны, rating 4.02. Критичные голоса.",
-        4: "Умеренная активность, также критичны (rating 4.04, негатив 11.4%). Менее вовлечены.",
+        0: "Регулярно пишут отзывы, высокий средний рейтинг (4.80), широкий охват брендов. Основная аудитория.",
+        1: "Наибольшая транзакционная активность среди всех сегментов: avg 682 транзакции, 515 чеков, 122 marketplace-события. Позитивные оценки (4.83), умеренное число отзывов.",
+        2: "Наибольшее число mp-событий (avg 152). Умеренная отзывная активность (6,6 отзыва), рейтинг 4,71. Ориентированы на просмотр и навигацию по платформе.",
+        3: "Повышенная доля негативных оценок (15.4%), активны, рейтинг 3.95. Критичные голоса.",
+        4: "Наивысшая доля позитивных отзывов (99,9%), минимум негатива (0,1%), рейтинг 4,85. Наименее активная группа по всем доменам (5,8 отзыва, 298 транзакций, 21 mp-событие).",
     }
     for sid, desc in descriptions.items():
         color = SEG_COLORS[sid]
         st.markdown(
             f'<div style="border-left:4px solid {color}; padding:0.6rem 1rem; '
             f'margin:0.4rem 0; background:white; border-radius:0 8px 8px 0">'
-            f'<b>Сегмент {sid} — {SEG_NAMES[sid]}</b><br>'
+            f'<b>Сегмент {sid} – {SEG_NAMES[sid]}</b><br>'
             f'<span style="color:{GRAY_TEXT}; font-size:0.88rem">{desc}</span></div>',
             unsafe_allow_html=True,
         )
