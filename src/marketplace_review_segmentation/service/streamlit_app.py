@@ -364,13 +364,14 @@ with tab2:
 
     if _is_demo():
         reviews_dist = safe_query(
-            "SELECT reviews_count, authors FROM dm_author_review_dist ORDER BY reviews_count LIMIT 20"
+            "SELECT reviews_count, authors FROM dm_author_review_dist ORDER BY reviews_count LIMIT 25"
         )
     else:
-        reviews_dist = safe_query(
-            "SELECT reviews_count, COUNT(*) AS authors FROM dm_author_features "
-            "GROUP BY reviews_count ORDER BY reviews_count LIMIT 20"
-        )
+        reviews_dist = safe_query("""
+            SELECT review_count AS reviews_count, COUNT(*) AS authors
+            FROM (SELECT user_id, COUNT(*) AS review_count FROM fact_reviews GROUP BY user_id) t
+            GROUP BY review_count ORDER BY review_count LIMIT 25
+        """)
 
     col_r, col_u = st.columns(2)
 
@@ -409,8 +410,8 @@ with tab2:
             ))
             fig2.update_layout(
                 title="Число отзывов на автора (топ-20 значений)",
-                xaxis_title="Отзывов на автора",
-                yaxis_title="Авторов",
+                xaxis_title="Число отзывов",
+                yaxis_title="Число авторов",
                 plot_bgcolor="white", paper_bgcolor="white",
                 height=360, margin=dict(t=50, b=40),
                 font=dict(family="Inter"),
@@ -431,6 +432,7 @@ with tab2:
             fig3 = px.line(
                 ratings_dyn, x="review_date", y="avg_rating",
                 title="Средняя оценка по дням",
+                labels={"review_date": "Дата", "avg_rating": "Средняя оценка"},
                 color_discrete_sequence=[NAVY],
             )
             fig3.update_layout(plot_bgcolor="white", paper_bgcolor="white",
@@ -444,6 +446,7 @@ with tab2:
             fig_rc = px.bar(
                 ratings_dyn, x="review_date", y="reviews_count",
                 title="Число отзывов по дням",
+                labels={"review_date": "Дата", "reviews_count": "Число отзывов"},
                 color_discrete_sequence=[LIGHT_BLUE],
             )
             fig_rc.update_layout(plot_bgcolor="white", paper_bgcolor="white",
@@ -458,6 +461,7 @@ with tab2:
             fig_tx = px.line(
                 tx_dyn, x="payment_date", y="transactions_count",
                 title="Транзакции по дням",
+                labels={"payment_date": "Дата", "transactions_count": "Число транзакций"},
                 color_discrete_sequence=[ORANGE],
             )
             fig_tx.update_layout(plot_bgcolor="white", paper_bgcolor="white",
@@ -471,6 +475,7 @@ with tab2:
             fig5 = px.area(
                 mp_data, x="event_date", y="marketplace_events_count",
                 title="Число событий на маркетплейсе по дням",
+                labels={"event_date": "Дата", "marketplace_events_count": "Число событий"},
                 color_discrete_sequence=[LIGHT_BLUE],
             )
             fig5.update_traces(line_color=NAVY, fillcolor="rgba(168,188,232,0.25)")
@@ -482,6 +487,13 @@ with tab2:
 
     # ── Блок 3: Бренды ────────────────────────────────────────────────────────
     st.markdown('<div class="section-header">Бренды</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="info-box" style="border-color:{ORANGE}; background:#FFF8F0">'
+        f'В датасете T-ECD настоящие названия брендов не раскрываются — '
+        f'вместо них используются анонимизированные числовые идентификаторы.'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
 
     brands_data = safe_query(
         "SELECT * FROM gold_brand_review_summary ORDER BY reviews_count DESC LIMIT 15"
@@ -493,6 +505,7 @@ with tab2:
             fig4 = px.bar(
                 brands_data, x="brand_label", y="reviews_count",
                 title="Топ-15 брендов по числу отзывов",
+                labels={"brand_label": "Идентификатор бренда", "reviews_count": "Число отзывов"},
                 color_discrete_sequence=[PURPLE],
                 hover_data=["avg_rating", "authors_count"] if "authors_count" in brands_data.columns else ["avg_rating"],
             )
@@ -510,6 +523,7 @@ with tab2:
                 x="avg_rating", y="brand_label",
                 orientation="h",
                 title="Средняя оценка топ-15 брендов",
+                labels={"brand_label": "Идентификатор бренда", "avg_rating": "Средняя оценка"},
                 color="avg_rating",
                 color_continuous_scale=[[0, "#E07878"], [0.5, ORANGE], [1, GREEN]],
                 range_color=[1, 5],
@@ -530,7 +544,8 @@ with tab2:
         with col_t1:
             fig_amt = px.line(
                 tx_dyn, x="payment_date", y="avg_transaction_amount",
-                title="Средний чек по дням",
+                title="Среднее количество транзакций по дням",
+                labels={"payment_date": "Дата", "avg_transaction_amount": "Среднее кол-во транзакций"},
                 color_discrete_sequence=[GREEN],
             )
             fig_amt.update_layout(plot_bgcolor="white", paper_bgcolor="white",
@@ -543,6 +558,7 @@ with tab2:
             fig_au = px.line(
                 tx_dyn, x="payment_date", y="active_users_count",
                 title="Активные пользователи (по транзакциям)",
+                labels={"payment_date": "Дата", "active_users_count": "Активных пользователей"},
                 color_discrete_sequence=[PURPLE],
             )
             fig_au.update_layout(plot_bgcolor="white", paper_bgcolor="white",
