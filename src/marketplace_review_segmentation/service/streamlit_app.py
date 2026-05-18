@@ -51,7 +51,7 @@ html, body, [class*="css"] {{
 }}
 
 .block-container {{ padding-top: 1.5rem; }}
-[data-testid="stTabs"] {{ margin-top: 1.5rem; }}
+[data-testid="stTabs"] {{ margin-top: 0.5rem; }}
 
 .hero {{
     background: linear-gradient(135deg, {NAVY} 0%, #2d3596 100%);
@@ -224,8 +224,8 @@ def _is_demo() -> bool:
 if _is_demo():
     st.markdown("<div style='margin-top: 2rem'></div>", unsafe_allow_html=True)
     st.info(
-        "**Демо-режим** — данные из встроенной выборки (demo.duckdb). "
-        "Для полного набора запустите локально с реальным хранилищем.",
+        "**Демо-режим** - данные из встроенной выборки (demo.duckdb). "
+        "Для полного набора нужно запустить локально с реальным хранилищем.",
         icon="ℹ️",
     )
 
