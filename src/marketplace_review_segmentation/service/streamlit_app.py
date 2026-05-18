@@ -222,6 +222,7 @@ def _is_demo() -> bool:
     return demo
 
 if _is_demo():
+    st.markdown("<div style='margin-top: 1rem'></div>", unsafe_allow_html=True)
     st.info(
         "**Демо-режим** — данные из встроенной выборки (demo.duckdb). "
         "Для полного набора запустите локально с реальным хранилищем.",
