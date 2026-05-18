@@ -18,7 +18,6 @@ if str(SRC) not in sys.path:
 
 from marketplace_review_segmentation.config import settings
 
-# ── Palette (matches presentation) ───────────────────────────────────────────
 ORANGE     = "#F5A623"
 GREEN      = "#9DC54A"
 PURPLE     = "#B87ACC"
@@ -36,7 +35,6 @@ SEG_NAMES  = {
     4: "Умеренно активные позитивные",
 }
 
-# ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Reviewer Segmentation",
     page_icon="",
@@ -44,7 +42,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Custom CSS ────────────────────────────────────────────────────────────────
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -244,7 +241,6 @@ if _is_demo():
         icon="ℹ️",
     )
 
-# ── Tabs ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Обзор",
     "Данные",
@@ -253,9 +249,6 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "API",
 ])
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 1 — ОБЗОР
-# ═══════════════════════════════════════════════════════════════════════════════
 with tab1:
     st.markdown("""
     <div class="hero">
@@ -346,7 +339,7 @@ with tab1:
             ("Bronze",   "Сырые parquet\nT-ECD → DuckDB"),
             ("Silver",   "Нормализация\nдоменов и событий"),
             ("Gold",     "Аналитические\nвитрины и DM"),
-            ("Features", "32 поведенческих\nпризнака / автор"),
+            ("Features", "32 поведенческих\nпризнака автора"),
             ("Model",    "KMeans k=5\nSilhouette=0.190"),
             ("Service",  "FastAPI + Streamlit\nдашборд"),
         ]
@@ -371,12 +364,8 @@ with tab1:
                 unsafe_allow_html=True,
             )
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — ДАННЫЕ
-# ═══════════════════════════════════════════════════════════════════════════════
 with tab2:
 
-    # ── Блок 1: Отзывы ────────────────────────────────────────────────────────
     st.markdown('<div class="section-header">Распределение отзывов</div>',
                 unsafe_allow_html=True)
 
@@ -448,7 +437,6 @@ with tab2:
             fig2.update_yaxes(showgrid=True, gridcolor="#F0F0F0")
             st.plotly_chart(fig2, use_container_width=True)
 
-    # ── Блок 2: Временная динамика ────────────────────────────────────────────
     st.markdown('<div class="section-header">Временная динамика</div>', unsafe_allow_html=True)
 
     ratings_dyn   = safe_query("SELECT * FROM gold_rating_dynamics ORDER BY review_date")
@@ -514,7 +502,6 @@ with tab2:
             fig5.update_yaxes(showgrid=True, gridcolor="#F0F0F0")
             st.plotly_chart(fig5, use_container_width=True)
 
-    # ── Блок 3: Бренды ────────────────────────────────────────────────────────
     st.markdown('<div class="section-header">Бренды</div>', unsafe_allow_html=True)
     st.markdown(
         f'<div class="info-box" style="border-color:{ORANGE}; background:#FFF8F0">'
@@ -565,7 +552,6 @@ with tab2:
             fig_br.update_xaxes(range=[0, 5.2], showgrid=True, gridcolor="#F0F0F0")
             st.plotly_chart(fig_br, use_container_width=True)
 
-    # ── Блок 4: Транзакции ───────────────────────────────────────────────────
     if tx_dyn is not None and not tx_dyn.empty:
         st.markdown('<div class="section-header">Транзакции</div>', unsafe_allow_html=True)
 
@@ -596,9 +582,6 @@ with tab2:
             fig_au.update_yaxes(showgrid=True, gridcolor="#F0F0F0")
             st.plotly_chart(fig_au, use_container_width=True)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 3 — МОДЕЛИ
-# ═══════════════════════════════════════════════════════════════════════════════
 with tab3:
     st.markdown('<div class="section-header">Сравнение моделей кластеризации</div>',
                 unsafe_allow_html=True)
@@ -630,7 +613,6 @@ with tab3:
     </table>
     """, unsafe_allow_html=True)
 
-    # k search chart
     st.markdown('<div class="section-header">Поиск оптимального числа кластеров</div>',
                 unsafe_allow_html=True)
 
@@ -669,7 +651,6 @@ with tab3:
     fig_k.update_yaxes(showgrid=True, gridcolor="#F0F0F0")
     st.plotly_chart(fig_k, use_container_width=True)
 
-    # Features
     st.markdown('<div class="section-header">Пространство признаков</div>',
                 unsafe_allow_html=True)
     f1, f2, f3, f4 = st.columns(4)
@@ -699,9 +680,6 @@ with tab3:
                 st.markdown(f"<small style='color:{GRAY_TEXT}'>· {f}</small>",
                             unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 4 — СЕГМЕНТЫ
-# ═══════════════════════════════════════════════════════════════════════════════
 with tab4:
     seg_profiles_data = [
         dict(id=0, name="Лояльные и активные",
@@ -721,7 +699,6 @@ with tab4:
              tx=298,  receipts=280, mp_events=21,  color="#E07878"),
     ]
 
-    # Segment cards
     st.markdown('<div class="section-header">Профили сегментов</div>',
                 unsafe_allow_html=True)
     cols5 = st.columns(5)
@@ -747,7 +724,6 @@ with tab4:
                 </div>
             </div>""", unsafe_allow_html=True)
 
-    # Comparison chart
     st.markdown('<div class="section-header">Сравнение сегментов</div>',
                 unsafe_allow_html=True)
 
@@ -780,7 +756,6 @@ with tab4:
     fig_seg.update_yaxes(showgrid=True, gridcolor="#F0F0F0")
     st.plotly_chart(fig_seg, use_container_width=True)
 
-    # Author explorer
     st.markdown('<div class="section-header">Просмотр авторов по сегменту</div>',
                 unsafe_allow_html=True)
     authors_df = safe_query(
@@ -795,7 +770,6 @@ with tab4:
         )
         filtered = authors_df[authors_df["final_segment_id"] == sel].head(200)
 
-        # Drop columns that are entirely null or entirely zero
         non_empty = [
             c for c in filtered.columns
             if filtered[c].notna().any() and not (filtered[c].fillna(0) == 0).all()
@@ -805,7 +779,6 @@ with tab4:
     else:
         st.info("Сегменты ещё не рассчитаны. Запустите этап обучения модели.")
 
-    # Transaction profile
     seg_tx = safe_query(
         "SELECT * FROM gold_segment_transaction_summary ORDER BY final_segment_id"
     )
@@ -830,9 +803,6 @@ with tab4:
             fig_tx.update_yaxes(showgrid=True, gridcolor="#F0F0F0")
             st.plotly_chart(fig_tx, use_container_width=True)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TAB 5 — API
-# ═══════════════════════════════════════════════════════════════════════════════
 with tab5:
     st.markdown(f"""
     <div class="hero">
@@ -890,7 +860,6 @@ with tab5:
     </div>
     """, unsafe_allow_html=True)
 
-    # Live tester
     st.markdown('<div class="section-header">Интерактивный поиск</div>',
                 unsafe_allow_html=True)
     st.markdown("Введите `user_id` для получения сегмента напрямую из базы:")
@@ -922,7 +891,6 @@ with tab5:
         else:
             st.warning(f"Автор `{uid_input}` не найден в базе.")
 
-    # Segment descriptions
     st.markdown('<div class="section-header">Справка по сегментам</div>',
                 unsafe_allow_html=True)
     descriptions = {
