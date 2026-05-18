@@ -50,11 +50,9 @@ html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
 }}
 
-/* push tabs below hero */
 .block-container {{ padding-top: 1.5rem; }}
 [data-testid="stTabs"] {{ margin-top: 1.5rem; }}
 
-/* ── Hero banner ── */
 .hero {{
     background: linear-gradient(135deg, {NAVY} 0%, #2d3596 100%);
     border-radius: 16px;
@@ -75,7 +73,6 @@ html, body, [class*="css"] {{
     margin: 0;
 }}
 
-/* ── Metric card ── */
 .metric-card {{
     background: white;
     border-radius: 12px;
@@ -97,7 +94,6 @@ html, body, [class*="css"] {{
     font-weight: 500;
 }}
 
-/* ── Badge / chip ── */
 .badge {{
     display: inline-block;
     padding: 0.25rem 0.75rem;
@@ -108,7 +104,6 @@ html, body, [class*="css"] {{
     color: white;
 }}
 
-/* ── Section header ── */
 .section-header {{
     font-size: 1.1rem;
     font-weight: 700;
@@ -118,7 +113,6 @@ html, body, [class*="css"] {{
     margin: 1.5rem 0 0.8rem 0;
 }}
 
-/* ── Segment card ── */
 .seg-card {{
     border-radius: 12px;
     padding: 1.1rem 1.3rem;
@@ -138,7 +132,6 @@ html, body, [class*="css"] {{
     line-height: 1.7;
 }}
 
-/* ── Pipeline step ── */
 .pipe-step {{
     background: white;
     border-radius: 10px;
@@ -151,7 +144,6 @@ html, body, [class*="css"] {{
 }}
 .pipe-step .pipe-sub {{ font-weight: 400; color: {GRAY_TEXT}; font-size: 0.78rem; }}
 
-/* ── Tech badge ── */
 .tech-badge {{
     display: inline-block;
     background: #F0F0F8;
@@ -164,7 +156,6 @@ html, body, [class*="css"] {{
     border: 1px solid #DDDDF0;
 }}
 
-/* ── API block ── */
 .api-endpoint {{
     background: #F8F9FD;
     border-radius: 10px;
@@ -184,7 +175,6 @@ html, body, [class*="css"] {{
 .method-get  {{ background: {GREEN}; }}
 .method-post {{ background: {ORANGE}; }}
 
-/* ── Info block ── */
 .info-box {{
     background: #F5F5FF;
     border-left: 4px solid {PURPLE};
@@ -195,7 +185,6 @@ html, body, [class*="css"] {{
     margin: 0.8rem 0;
 }}
 
-/* model comparison table */
 .model-table {{ border-collapse: collapse; width: 100%; font-size: 0.9rem; }}
 .model-table th {{ background: {NAVY}; color: white; padding: 0.6rem 1rem; text-align: left; }}
 .model-table td {{ padding: 0.55rem 1rem; border-bottom: 1px solid #EEEEEE; }}
