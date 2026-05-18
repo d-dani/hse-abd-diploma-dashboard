@@ -191,6 +191,10 @@ html, body, [class*="css"] {{
 .model-table tr:last-child td {{ border-bottom: none; }}
 .model-table tr.best-row td {{ background: #F0FBE8; font-weight: 600; }}
 .highlight {{ color: {GREEN}; font-weight: 700; }}
+div[data-testid="stInfo"] {{
+    margin-top: 3rem !important;
+    margin-bottom: 1rem !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
