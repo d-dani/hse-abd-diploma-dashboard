@@ -205,7 +205,6 @@ html, body, [class*="css"] {{
 </style>
 """, unsafe_allow_html=True)
 
-# ── DB connection ─────────────────────────────────────────────────────────────
 _DEMO_PATH = ROOT / "data" / "artifacts" / "demo.duckdb"
 
 @st.cache_resource
@@ -218,7 +217,7 @@ def get_conn() -> tuple[duckdb.DuckDBPyConnection, bool]:
         pass
     if _DEMO_PATH.exists():
         return duckdb.connect(str(_DEMO_PATH), read_only=True), True
-    return None, True  # type: ignore[return-value]
+    return None, True
 
 def safe_query(query: str) -> pd.DataFrame | None:
     conn, _ = get_conn()
@@ -233,7 +232,6 @@ def _is_demo() -> bool:
     _, demo = get_conn()
     return demo
 
-# ── Demo mode banner ──────────────────────────────────────────────────────────
 if _is_demo():
     st.info(
         "**Демо-режим** — данные из встроенной выборки (demo.duckdb). "
