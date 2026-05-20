@@ -529,13 +529,19 @@ with tab2:
                 color="avg_rating",
                 color_continuous_scale=[[0, "#E07878"], [0.5, ORANGE], [1, GREEN]],
                 range_color=[1, 5],
+                text="avg_rating",
+            )
+            fig_br.update_traces(
+                texttemplate="%{x:.2f}",
+                textposition="outside",
+                textfont=dict(size=11, color=DARK_TEXT),
             )
             fig_br.update_layout(plot_bgcolor="white", paper_bgcolor="white",
                                  height=360, font=dict(family="Inter"),
-                                 margin=dict(t=50, b=40),
+                                 margin=dict(t=50, b=40, r=20),
                                  showlegend=False,
                                  coloraxis_showscale=False)
-            fig_br.update_xaxes(range=[0, 5.2], showgrid=True, gridcolor="#F0F0F0")
+            fig_br.update_xaxes(range=[0, 5.6], showgrid=True, gridcolor="#F0F0F0")
             st.plotly_chart(fig_br, use_container_width=True)
 
     if tx_dyn is not None and not tx_dyn.empty:
