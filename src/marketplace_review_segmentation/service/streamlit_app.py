@@ -46,6 +46,44 @@ st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+html, body {{
+    background-color: #FFFFFF !important;
+    color: #1C1C1C !important;
+}}
+[data-testid="stApp"] {{
+    background-color: #FFFFFF !important;
+    color: #1C1C1C !important;
+}}
+[data-testid="stAppViewContainer"] {{
+    background-color: #FFFFFF !important;
+}}
+[data-testid="stHeader"] {{
+    background-color: #FFFFFF !important;
+}}
+[data-testid="stMain"] {{
+    background-color: #FFFFFF !important;
+}}
+.stApp {{
+    background-color: #FFFFFF !important;
+    color: #1C1C1C !important;
+}}
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] span {{
+    color: #1C1C1C !important;
+}}
+[data-testid="stSelectbox"] label,
+[data-testid="stTextInput"] label {{
+    color: #1C1C1C !important;
+}}
+
+[data-testid="stTabs"] [data-baseweb="tab-list"] {{
+    background-color: #FFFFFF !important;
+}}
+[data-baseweb="tab"] {{
+    color: #1C1C1C !important;
+}}
+
 html, body, [class*="css"] {{
     font-family: 'Inter', sans-serif;
 }}
